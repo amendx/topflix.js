@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <button v-on:click="filterMoviesByDate('acs')">Mais Antigo</button>
+    <button v-on:click="filterMoviesByDate('desc')">Mais Recente</button>
+    <hr />
     <button @click="searchBy('movie')" class="movie-card__button--favorite">Filmes</button> |
     <button @click="searchBy('tv')" class="movie-card__button--detail">Séries</button>
     <hr />
@@ -9,11 +12,13 @@
       v-on:add-favorite="addFavorite"
     />
     <hr />
-    <button v-on:click="nextPage">Proxima Página</button>
+    <button v-on:click="nextPage">Próxima Página</button>
+    <CarrouselCard v-bind:movies="movies" v-bind:src="baseIMG" />
   </div>
 </template>
 
 <script>
+import CarrouselCard from "@/components/CarrouselCard";
 import MoviesList from "@/components/MoviesList.vue";
 import axios from "axios";
 export default {
@@ -26,6 +31,7 @@ export default {
       counter: 1,
       type: "movie",
       baseURL: "https://api.themoviedb.org/3",
+      baseIMG: "https://image.tmdb.org/t/p/original",
       moviedbKEY: "533bf9a3f2e9acf633932e225a72339e",
       fullUrl: this.baseURL
     };
@@ -69,6 +75,15 @@ export default {
           this.movies = response.data.results.slice(0, 10);
         });
     },
+    filterMoviesByDate(filter) {
+      axios
+        .get(
+          `${this.baseURL}/discover/${this.type}?api_key=${this.moviedbKEY}&language=pt-BR&sort_by=popularity.desc&sort_by=release_date.${filter}`
+        )
+        .then(response => {
+          this.movies = response.data.results.slice(0, 10);
+        });
+    },
 
     nextPage() {
       this.counter += 1;
@@ -82,7 +97,8 @@ export default {
     }
   },
   components: {
-    MoviesList
+    MoviesList,
+    CarrouselCard
   }
 };
 </script>
