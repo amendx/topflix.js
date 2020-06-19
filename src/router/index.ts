@@ -15,17 +15,17 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/movies',
-    name: 'Movies',
+    name: 'Filmes',
     component: Movies
   },
   {
-    path: '/details/:id',
-    name: 'Details',
+    path: '/details/:type/:id',
+    name: 'Detalhes',
     component: DetailsPage
   },
   {
     path: '/favorites',
-    name: 'Favorites',
+    name: 'Favoritos',
     component: Favorites
   },
 ]
