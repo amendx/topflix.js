@@ -11,11 +11,13 @@
 <script>
 import MovieDetailsCard from "@/components/MovieDetailsCard.vue";
 import axios from "axios";
+
 export default {
   name: "DetailsPage",
   data() {
     return {
       id: this.$route.params.id,
+      type: this.$route.params.type,
       currentMovie: [],
       baseURL: "https://api.themoviedb.org/3",
       moviedbKEY: "533bf9a3f2e9acf633932e225a72339e"
@@ -25,6 +27,7 @@ export default {
     MovieDetailsCard
   },
   mounted() {
+    console.log("this ROUNT", this.type);
     this.getMoviesById(this.id);
   },
   methods: {
@@ -32,7 +35,7 @@ export default {
       if (id !== 0)
         axios
           .get(
-            `${this.baseURL}/movie/${id}?api_key=${this.moviedbKEY}&language=pt-BR`
+            `${this.baseURL}/${this.type}/${id}?api_key=${this.moviedbKEY}&language=pt-BR`
           )
           .then(response => (this.currentMovie = response.data));
     }

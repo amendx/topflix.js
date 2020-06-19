@@ -19,7 +19,7 @@ const routes: Array<RouteConfig> = [
     component: Movies
   },
   {
-    path: '/details/:id',
+    path: '/details/:type/:id',
     name: 'Details',
     component: DetailsPage
   },
