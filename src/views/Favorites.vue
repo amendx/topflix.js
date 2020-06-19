@@ -65,18 +65,20 @@ export default {
       localStorage.setItem("favoriteSeries", updatedSeriesId);
     },
     getMoviesById(id) {
-      axios
-        .get(
-          `${this.baseURL}/movie/${id}?api_key=${this.moviedbKEY}&language=pt-BR`
-        )
-        .then(response => this.updatedMovies.push(response.data));
+      if (id !== 0)
+        axios
+          .get(
+            `${this.baseURL}/movie/${id}?api_key=${this.moviedbKEY}&language=pt-BR`
+          )
+          .then(response => this.updatedMovies.push(response.data));
     },
     getSeriesById(id) {
-      axios
-        .get(
-          `${this.baseURL}/tv/${id}?api_key=${this.moviedbKEY}&language=pt-BR`
-        )
-        .then(response => this.updatedSeries.push(response.data));
+      if (id !== 0)
+        axios
+          .get(
+            `${this.baseURL}/tv/${id}?api_key=${this.moviedbKEY}&language=pt-BR`
+          )
+          .then(response => this.updatedSeries.push(response.data));
     }
   }
 };

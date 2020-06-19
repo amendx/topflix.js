@@ -16,9 +16,13 @@ export default {
     };
   },
   components: {},
-  created() {
-    localStorage.setItem("favoriteMovies", "");
-    localStorage.setItem("favoriteSeries", "");
+  mounted() {
+    localStorage.getItem("favoriteMovies") === undefined
+      ? localStorage.setItem("favoriteMovies", "")
+      : "";
+    localStorage.getItem("favoriteSeries") === undefined
+      ? localStorage.setItem("favoriteSeries", "")
+      : "";
   },
   methods: {}
 };

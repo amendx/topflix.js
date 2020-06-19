@@ -59,6 +59,7 @@ export default {
     },
     detailMovie(id) {
       console.log("detail movie", id);
+      this.$router.push("/details/" + id);
     },
     getPopularMovies() {
       axios
