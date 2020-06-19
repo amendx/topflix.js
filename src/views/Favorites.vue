@@ -141,5 +141,10 @@ export default {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 30px;
+  .favorites__header {
+    font-size: 25px;
+    font-weight: bolder;
+    color: #fff;
+  }
 }
 </style>

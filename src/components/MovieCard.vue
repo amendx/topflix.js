@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="movie_card" id="bright">
+    <div class="movie_card" :class="isFavorite ?  'movie_card' : 'movie_card--big'" id="bright">
       <div class="info_section">
         <div class="movie_header">
           <img class="locandina" :src="poster+movie.poster_path" />
@@ -71,33 +71,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.movie-card {
-  &__image {
-  }
-  &__button {
-    &--favorite {
-      background-color: purple;
-    }
-    &--unfavorite {
-    }
-    &--detail {
-      background-color: royalblue;
-    }
-  }
-  &--favorite {
-    background-color: yellow;
-  }
-}
-
 .movie_card {
   position: relative;
   display: block;
-  width: 800px;
+  width: 65vw;
   height: 350px;
   margin: 35px auto;
   overflow: hidden;
   border-radius: 10px;
   transition: all 0.4s;
+  &--big {
+    width: 85vw;
+  }
   &:hover {
     transform: scale(1.02);
     transition: all 0.4s;
@@ -121,7 +106,7 @@ export default {
         word-wrap: break-word;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 2; /* number of lines to show */
+        -webkit-line-clamp: 1; /* number of lines to show */
         -webkit-box-orient: vertical;
       }
 
@@ -223,12 +208,23 @@ export default {
   }
 }
 
+@media screen and (min-width: 1260px) {
+  .movie_card {
+    width: 45vw;
+    &--big {
+      width: 85vw;
+    }
+  }
+}
 @media screen and (max-width: 768px) {
   .movie_card {
-    width: 95%;
-    margin: 70px auto;
+    width: 55vw;
     min-height: 350px;
     height: auto;
+  }
+
+  .locandina {
+    display: none;
   }
 
   .blur_back {

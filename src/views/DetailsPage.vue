@@ -32,7 +32,6 @@ export default {
     MovieDetailsCard
   },
   mounted() {
-    console.log("this ROUNT", this.type);
     this.getMoviesById(this.id);
   },
   methods: {
