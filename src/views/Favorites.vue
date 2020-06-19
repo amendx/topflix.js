@@ -2,10 +2,24 @@
   <div>
     FILMES:
     <hr />
-    <MoviesList v-bind:movies="updatedMovies" v-on:del-movie="deleteMovie" />
+    <MoviesList
+      v-bind:movies="updatedMovies"
+      v-bind:src="baseIMG"
+      v-bind:isFavorite="true"
+      v-bind:poster="posterPath"
+      v-on:detail-movie="detailMovie"
+      v-on:del-movie="deleteMovie"
+    />
     <hr />SERIES
     <hr />
-    <MoviesList v-bind:movies="updatedSeries" v-on:del-movie="deleteSerie" />
+    <MoviesList
+      v-bind:movies="updatedSeries"
+      v-bind:src="baseIMG"
+      v-bind:isFavorite="true"
+      v-bind:poster="posterPath"
+      v-on:detail-movie="detailSerie"
+      v-on:del-movie="deleteSerie"
+    />
   </div>
 </template>
 
@@ -19,10 +33,14 @@ export default {
       favoriteMovies: [],
       favoriteSeries: [],
       movies: [],
+      genres: [],
+      genreNames: [],
       updatedMovies: [],
       updatedSeries: [],
       counter: 1,
       baseURL: "https://api.themoviedb.org/3",
+      baseIMG: "https://image.tmdb.org/t/p/original",
+      posterPath: "http://image.tmdb.org/t/p/w500",
       moviedbKEY: "533bf9a3f2e9acf633932e225a72339e",
       fullUrl: this.baseURL
     };
@@ -32,6 +50,7 @@ export default {
   },
   mounted() {
     this.getFavorites();
+    this.getGenres();
   },
   methods: {
     getFavorites() {
@@ -49,7 +68,28 @@ export default {
         this.getSeriesById(Number(movie));
       });
     },
+    getGenres() {
+      axios
+        .get(
+          `${this.baseURL}/genre/${this.type}/list?api_key=${this.moviedbKEY}&language=pt-BR`
+        )
+        .then(response => {
+          this.genres = response.data.genres;
+          this.updatedMovies.forEach(movie => {
+            this.genreNames = movie.genre_ids.map(
+              id => this.genres.find(genre => genre.id === id).name
+            );
+            movie["genre_ids"] = this.genreNames;
+          });
+        });
+    },
 
+    detailMovie(id) {
+      this.$router.push(`/details/movie/` + id);
+    },
+    detailSerie(id) {
+      this.$router.push(`/details/tv/` + id);
+    },
     deleteMovie(id) {
       this.updatedMovies = this.updatedMovies.filter(movie => movie.id !== id);
       const updatedMoviesId = this.updatedMovies.map(
