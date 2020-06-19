@@ -1,14 +1,41 @@
 <template>
-  <div class="movie-card" v-bind:class="{'movie-card--favorite':favorite}">
-    <div class="movie-card__info">
-      <p class="movie-card__title">{{movie.title ? movie.title : movie.original_name}}</p>
-      <span class="movie-card__overview">{{movie.overview}}</span>
-      <span class="movie-card__span star">Nota: {{movie.vote_average}}</span>
-      <span class="movie-card__span">Tempo: {{movie.runtime }} minutos</span>
+  <div>
+    <div class="movie_card">
+      <div class="info_section">
+        <div class="movie_header">
+          <img class="locandina" :src="poster+movie.poster_path" />
+          <h1>{{movie.title ? movie.title : movie.original_name}}</h1>
+          <span class="minutes">{{movie.release_date | getDate}}</span>
+          <p class="type">{{movie.genre_ids !== undefined ? movie.genre_ids.join(', ') : ''}}</p>
+          <p
+            class="type"
+          >{{movie.genres !== undefined ? movie.genres.map(genre => genre.name).join(', ') : ''}}</p>
+        </div>
+        <div class="movie_desc">
+          <p class="text">{{movie.overview}}</p>
+        </div>
+        <div class="movie_social">
+          <ul>
+            <li>
+              <span class="minutes" @click="favoriteMovie(movie.id)">{{ actionText}}</span>
+            </li>
 
-      <button @click="addFavorite(movie.id)" class="card-footer movie-card__button--favorite">ADD</button>
+            <li>
+              <span class="minutes">Nota: {{movie.vote_average}}</span>
+            </li>
+            <li>
+              <span class="minutes">Tempo: {{movie.runtime }} minutos</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="blur_back bright_back"
+        v-bind:style="{
+        background: 'url('+movie.backdrop_path+')'
+        }"
+      ></div>
     </div>
-    <img class="movie-card__image" :src="movie.backdrop_path" />
   </div>
 </template>
 
@@ -17,15 +44,30 @@ export default {
   name: "MovieDetailsCard",
   data() {
     return {
+      actionText: "Favoritar",
       defaultImage:
         "https://previews.123rf.com/images/guru3d/guru3d1505/guru3d150503778/39830496-3d-red-text-default-on-a-white-background-the-film-strip.jpg"
     };
   },
-  props: ["movie", "src"],
+  props: ["movie", "src", "poster", "isFavorite"],
   methods: {
-    addFavorite(id) {
-      this.favorite = !this.favorite;
-      this.$emit("add-favorite", id);
+    favoriteMovie(id) {
+      if (this.isFavorite === true) this.$emit("del-movie", id);
+      else if (this.isFavorite === false) {
+        this.$emit("add-favorite", id);
+        this.actionText = "Desfavoritar";
+      }
+    }
+  },
+  mounted() {
+    this.isFavorite === false
+      ? (this.actionText = "Favoritar")
+      : (this.actionText = "Desfavoritar");
+  },
+  filters: {
+    getDate(date) {
+      const t = new Date(date);
+      return t.getFullYear();
     }
   },
   watch: {
@@ -45,11 +87,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.movie-card {
+.movie_card {
   position: relative;
   display: block;
-  width: 800px;
-  height: 350px;
+  width: 80vw;
+  height: 80vh;
   margin: 35px auto;
   overflow: hidden;
   border-radius: 10px;
@@ -58,23 +100,85 @@ export default {
     transform: scale(1.02);
     transition: all 0.4s;
   }
-  &__span {
-    &.star {
-      &::after {
-        content: "★";
-        color: red;
+
+  .info_section {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-blend-mode: multiply;
+    z-index: 2;
+    border-radius: 10px;
+    .movie_header {
+      position: relative;
+      padding: 10px 25px;
+      height: 40%;
+      h1 {
+        color: #fff;
+      }
+
+      .minutes {
+        display: inline-block;
+        margin-top: 10px;
+        color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+      }
+      .type {
+        display: inline-block;
+        color: #cee4fd;
+        margin-left: 10px;
+      }
+      .locandina {
+        position: relative;
+        float: left;
+        margin-right: 20px;
+        height: 120px;
+        box-shadow: 0 0 20px -10px rgba(0, 0, 0, 0.5);
+      }
+    }
+    .movie_desc {
+      padding: 25px;
+      height: 50%;
+      .text {
+        color: #cfd6e1;
+      }
+    }
+    .movie_social {
+      height: 10%;
+      padding-left: 15px;
+      margin-top: -7em;
+      padding-bottom: 20px;
+
+      ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        justify-content: flex-start;
+        li {
+          color: rgba(255, 255, 255, 0.4);
+          transition: color 0.3s;
+          transition-delay: 0.15s;
+          margin: 0 10px;
+          .minutes {
+            display: inline-block;
+            margin-top: 10px;
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            &:hover {
+              transition: color 0.3s;
+              background-color: rgba(255, 255, 255, 0.13);
+              color: rgba(255, 255, 255, 0.8);
+            }
+          }
+        }
       }
     }
   }
-
-  &__image {
-    &--poster {
-      position: relative;
-      float: left;
-      margin-right: 20px;
-      height: 120px;
-      box-shadow: 0 0 20px -10px rgba(0, 0, 0, 0.5);
-    }
+  .blur_back {
     position: absolute;
     top: 0;
     z-index: 1;
@@ -83,126 +187,52 @@ export default {
     background-size: cover;
     border-radius: 11px;
   }
-  &__title {
-    position: relative;
-    padding: 10px 25px;
-    height: 40%;
-  }
-  &__date {
-    display: inline-block;
-    margin-top: 10px;
-    color: #fff;
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+@media screen and (min-width: 768px) {
+  .movie_header {
+    width: 60%;
   }
 
-  &__type {
-    display: inline-block;
-    color: #cee4fd;
-    margin-left: 10px;
+  .movie_desc {
+    width: 50%;
   }
 
-  &__overview {
-    position: relative;
+  .info_section {
+    background: linear-gradient(to right, #0d0d0c 50%, transparent 100%);
+  }
+
+  .blur_back {
+    width: 80%;
+    background-position: -100% 10% !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .movie_card {
+    width: 95%;
+    margin: 70px auto;
+    min-height: 350px;
+    height: auto;
+  }
+
+  .blur_back {
     width: 100%;
-    height: 100%;
-    background-blend-mode: multiply;
-    z-index: 2;
-    border-radius: 10px;
-  }
-  &__options {
-    height: 10%;
-    padding-left: 15px;
-    margin-top: -7em;
-    padding-bottom: 20px;
-    ul {
-      list-style: none;
-      padding: 0;
-      display: flex;
-      justify-content: flex-start;
-      li {
-        color: rgba(255, 255, 255, 0.4);
-        transition: color 0.3s;
-        transition-delay: 0.15s;
-        margin: 0 10px;
-        .minutes {
-          display: inline-block;
-          margin-top: 10px;
-          color: #fff;
-          padding: 5px;
-          border-radius: 5px;
-          cursor: pointer;
-          border: 1px solid rgba(255, 255, 255, 0.13);
-          &:hover {
-            transition: color 0.3s;
-            background-color: rgba(255, 255, 255, 0.13);
-            color: rgba(255, 255, 255, 0.8);
-          }
-        }
-      }
-    }
-  }
-  &__button {
-    &--favorite {
-      background-color: orangered;
-    }
-    &--unfavorite {
-    }
-  }
-  &--favorite {
-    background-color: yellow;
+    background-position: 50% 50% !important;
   }
 
-  @media screen and (min-width: 768px) {
-    .movie-card__title {
-      width: 60%;
-    }
-
-    .movie-card__overview {
-      width: 50%;
-    }
-
-    .movie-card__info {
-      background: linear-gradient(to right, #0d0d0c 50%, transparent 100%);
-    }
-
-    .movie-card__image {
-      width: 80%;
-      background-position: -100% 10% !important;
-    }
+  .movie_header {
+    width: 100%;
+    margin-top: 85px;
   }
 
-  @media screen and (max-width: 768px) {
-    .movie_card {
-      width: 95%;
-      margin: 70px auto;
-      min-height: 350px;
-      height: auto;
-    }
+  .movie_desc {
+    width: 100%;
+  }
 
-    .movie-card__image {
-      width: 100%;
-      background-position: 50% 50% !important;
-    }
-
-    .movie-card__title {
-      width: 100%;
-      margin-top: 85px;
-    }
-
-    .movie-card__overview {
-      width: 100%;
-    }
-
-    .movie-card__info {
-      background: linear-gradient(
-        to top,
-        rgb(20, 20, 19) 50%,
-        transparent 100%
-      );
-      display: inline-grid;
-    }
+  .info_section {
+    background: linear-gradient(to top, rgb(20, 20, 19) 50%, transparent 100%);
+    display: inline-grid;
   }
 }
 </style>

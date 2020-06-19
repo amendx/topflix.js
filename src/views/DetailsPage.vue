@@ -3,6 +3,8 @@
     <MovieDetailsCard
       v-bind:movie="currentMovie"
       v-bind:src="baseIMG"
+      v-bind:poster="posterPath"
+      v-bind:isFavorite="false"
       v-on:del-movie="$emit('del-movie', currentMovie.id)"
       v-on:add-favorite="$emit('add-favorite', currentMovie.id)"
     />
@@ -22,6 +24,7 @@ export default {
       currentMovie: [],
       baseURL: "https://api.themoviedb.org/3",
       baseIMG: "https://image.tmdb.org/t/p/original",
+      posterPath: "http://image.tmdb.org/t/p/w500",
       moviedbKEY: "533bf9a3f2e9acf633932e225a72339e"
     };
   },

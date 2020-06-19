@@ -1,25 +1,27 @@
 <template>
-  <div>
-    FILMES:
-    <hr />
-    <MoviesList
-      v-bind:movies="updatedMovies"
-      v-bind:src="baseIMG"
-      v-bind:isFavorite="true"
-      v-bind:poster="posterPath"
-      v-on:detail-movie="detailMovie"
-      v-on:del-movie="deleteMovie"
-    />
-    <hr />SERIES
-    <hr />
-    <MoviesList
-      v-bind:movies="updatedSeries"
-      v-bind:src="baseIMG"
-      v-bind:isFavorite="true"
-      v-bind:poster="posterPath"
-      v-on:detail-movie="detailSerie"
-      v-on:del-movie="deleteSerie"
-    />
+  <div class="favorites">
+    <div class="favorites__movies">
+      <span class="favorites__header">SEUS FILMES</span>
+      <MoviesList
+        v-bind:movies="updatedMovies"
+        v-bind:src="baseIMG"
+        v-bind:isFavorite="true"
+        v-bind:poster="posterPath"
+        v-on:detail-movie="detailMovie"
+        v-on:del-movie="deleteMovie"
+      />
+    </div>
+    <div class="favorites__series">
+      <span class="favorites__header">SUAS SÉRIES</span>
+      <MoviesList
+        v-bind:movies="updatedSeries"
+        v-bind:src="baseIMG"
+        v-bind:isFavorite="true"
+        v-bind:poster="posterPath"
+        v-on:detail-movie="detailSerie"
+        v-on:del-movie="deleteSerie"
+      />
+    </div>
   </div>
 </template>
 
@@ -38,6 +40,8 @@ export default {
       updatedMovies: [],
       updatedSeries: [],
       counter: 1,
+      type: "movie",
+      filter: "asc",
       baseURL: "https://api.themoviedb.org/3",
       baseIMG: "https://image.tmdb.org/t/p/original",
       posterPath: "http://image.tmdb.org/t/p/w500",
@@ -53,6 +57,9 @@ export default {
     this.getGenres();
   },
   methods: {
+    filterMoviesByDate(filter) {
+      this.filter = filter;
+    },
     getFavorites() {
       this.favoriteMovies = [
         ...new Set(localStorage.getItem("favoriteMovies").split(","))
@@ -68,6 +75,10 @@ export default {
         this.getSeriesById(Number(movie));
       });
     },
+    searchBy(type) {
+      this.type = type;
+    },
+
     getGenres() {
       axios
         .get(
@@ -76,9 +87,10 @@ export default {
         .then(response => {
           this.genres = response.data.genres;
           this.updatedMovies.forEach(movie => {
-            this.genreNames = movie.genre_ids.map(
-              id => this.genres.find(genre => genre.id === id).name
-            );
+            if (movie["genre_ids"] !== undefined)
+              this.genreNames = movie.genre_ids.map(
+                id => this.genres.find(genre => genre.id === id).name
+              );
             movie["genre_ids"] = this.genreNames;
           });
         });
@@ -108,7 +120,7 @@ export default {
       if (id !== 0)
         axios
           .get(
-            `${this.baseURL}/movie/${id}?api_key=${this.moviedbKEY}&language=pt-BR`
+            `${this.baseURL}/movie/${id}?api_key=${this.moviedbKEY}&language=pt-BR&sort_by=release_date.${this.filter}`
           )
           .then(response => this.updatedMovies.push(response.data));
     },
@@ -124,5 +136,10 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.favorites {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 30px;
+}
 </style>
