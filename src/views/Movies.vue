@@ -71,20 +71,13 @@ export default {
     };
   },
   mounted() {
-    this.getGenres();
     this.getPopularMovies();
+    this.getGenres();
   },
 
   watch: {
     movies() {
-      this.movies.forEach(movie => {
-        if (movie !== undefined)
-          this.genreNames = movie.genre_ids.map(id => {
-            if (id !== undefined)
-              this.genres.find(genre => genre.id === id).name;
-          });
-        if (movie !== undefined) movie["genre_ids"] = this.genreNames;
-      });
+      this.getPopularMovies();
     }
   },
 
@@ -94,6 +87,7 @@ export default {
       this.getPopularMovies();
     },
     activate(type) {
+      console.log("type", type);
       type === "tv"
         ? ((this.programType = "Series"), (this.ordered = "Mais Votadas"))
         : ((this.programType = "Filmes"), (this.ordered = "Mais Votados"));
@@ -143,6 +137,14 @@ export default {
         )
         .then(response => {
           this.movies = response.data.results.slice(0, 10);
+          this.movies.forEach(movie => {
+            if (movie !== undefined)
+              if (movie !== undefined)
+                this.genreNames = movie.genre_ids.map(
+                  id => this.genres.find(genre => genre.id === id).name
+                );
+            movie["genre_ids"] = this.genreNames;
+          });
         });
     },
     filterMoviesByDate(filter) {
