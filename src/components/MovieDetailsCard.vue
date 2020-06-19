@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="movie-card max-w-sm rounded overflow-hidden shadow-lg"
-    v-bind:class="{'movie-card--favorite':favorite}"
-  >
+  <div class="movie-card" v-bind:class="{'movie-card--favorite':favorite}">
     <p class="movie-card__title">{{movie.title ? movie.title : movie.original_name}}</p>
     <span class="movie-card__overview">{{movie.overview}}</span>
     <img class="movie-card__image" :src="movie.backdrop_path" />
