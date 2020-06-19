@@ -1,8 +1,11 @@
 <template>
   <div class="todo-item" v-bind:class="{'movie-card--favorite':favorite}">
     <p>
-      {{movie.title}}
-      <button @click="addFavorite(movie.id)" class="movie-card__button--favorite">ADD</button> |
+      {{movie.title ? movie.title : movie.original_name}}
+      <button
+        @click="addFavorite(movie.id)"
+        class="movie-card__button--favorite"
+      >ADD</button> |
       <button @click="detailMovie(movie.id)" class="movie-card__button--detail">DETAIL</button> |
       <button @click="$emit('del-movie', movie.id)" class="del">x</button>
       |

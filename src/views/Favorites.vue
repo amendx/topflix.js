@@ -1,6 +1,11 @@
 <template>
   <div>
-    <MoviesList v-bind:movies="newMovies" v-on:del-movie="deleteMovie" />
+    FILMES:
+    <hr />
+    <MoviesList v-bind:movies="updatedMovies" v-on:del-movie="deleteMovie" />
+    <hr />SERIES
+    <hr />
+    <MoviesList v-bind:movies="updatedSeries" v-on:del-movie="deleteSerie" />
   </div>
 </template>
 
@@ -12,8 +17,10 @@ export default {
   data() {
     return {
       favoriteMovies: [],
+      favoriteSeries: [],
       movies: [],
-      newMovies: [],
+      updatedMovies: [],
+      updatedSeries: [],
       counter: 1,
       baseURL: "https://api.themoviedb.org/3",
       moviedbKEY: "533bf9a3f2e9acf633932e225a72339e",
@@ -31,24 +38,45 @@ export default {
       this.favoriteMovies = [
         ...new Set(localStorage.getItem("favoriteMovies").split(","))
       ];
+      this.favoriteSeries = [
+        ...new Set(localStorage.getItem("favoriteSeries").split(","))
+      ];
+
       this.favoriteMovies.forEach(movie => {
         this.getMoviesById(Number(movie));
       });
+      this.favoriteSeries.forEach(movie => {
+        this.getSeriesById(Number(movie));
+      });
     },
+
     deleteMovie(id) {
-      this.newMovies = this.newMovies.filter(movie => movie.id !== id);
-      console.log(`new movies delete [${id}] -> `, this.newMovies);
-      const updatedFavoriteList = this.newMovies.map(
+      this.updatedMovies = this.updatedMovies.filter(movie => movie.id !== id);
+      const updatedMoviesId = this.updatedMovies.map(
         movie => (movie = movie.id)
       );
-      localStorage.setItem("favoriteMovies", updatedFavoriteList);
+      localStorage.setItem("favoriteMovies", updatedMoviesId);
+    },
+    deleteSerie(id) {
+      this.updatedSeries = this.updatedSeries.filter(serie => serie.id !== id);
+      const updatedSeriesId = this.updatedSeries.map(
+        serie => (serie = serie.id)
+      );
+      localStorage.setItem("favoriteSeries", updatedSeriesId);
     },
     getMoviesById(id) {
       axios
         .get(
           `${this.baseURL}/movie/${id}?api_key=${this.moviedbKEY}&language=pt-BR`
         )
-        .then(response => this.newMovies.push(response.data));
+        .then(response => this.updatedMovies.push(response.data));
+    },
+    getSeriesById(id) {
+      axios
+        .get(
+          `${this.baseURL}/tv/${id}?api_key=${this.moviedbKEY}&language=pt-BR`
+        )
+        .then(response => this.updatedSeries.push(response.data));
     }
   }
 };

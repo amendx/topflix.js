@@ -16,6 +16,10 @@ export default {
     };
   },
   components: {},
+  created() {
+    localStorage.setItem("favoriteMovies", "");
+    localStorage.setItem("favoriteSeries", "");
+  },
   methods: {}
 };
 </script>
